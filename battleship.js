@@ -27,7 +27,7 @@ classes = {
 
     },
     magic_user: {
-        req: 'none',
+        req: 'Harry Potter',
         prime_req: prime_req[1],
         hit_dice: '1d4',
         max_level: 14,
