@@ -9,8 +9,8 @@ classes = {
         weapons: 'any',
         languages: ['Alignment', 'Common'],
         levels: {
-            1: 1000,
-            2: 20000,
+            1: 0,
+            2: 2000,
             3: 4000,
             4: 8000,
             5: 16000,
