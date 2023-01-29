@@ -244,8 +244,7 @@ function play() {
             case 1: // Player Turn
                 console.log("Let's start the game")
                 console.log("Here is your game view \n")
-                console.log(printBoard(boards.player.viewBoard))
-
+                console.log(printBoard(boards.computer.viewBoard))
                 var spot = prompt('Where do you want to place the hit?');
                 let valid = spotValidator(spot)
 
@@ -255,18 +254,16 @@ function play() {
 
                 }
                 spot = spotParser(spot)
-
-
-                boards.player.viewBoard[spot[0]][spot[1]] = "X"
-                if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
+                boards.computer.viewBoard[spot[1]][spot[0]] = "X"
+                if (boards.computer.fullBoard[spot[1]][spot[0]] == 1) {
                     console.log("Nice! You got a hit")
-                    console.log(printBoard(boards.player.viewBoard))
-                    boards.player.fullBoard[spot[0]][spot[1]] = "X"
+                    console.log(printBoard(boards.computer.viewBoard))
+                    boards.computer.fullBoard[spot[1]][spot[0]] = "X"
                     GAME_STATE.stage += 1;
 
                 } else {
                     console.log("Boo! You missed")
-                    console.log(printBoard(boards.player.viewBoard))
+                    console.log(printBoard(boards.computer.viewBoard))
                     GAME_STATE.stage += 1;
                 }
         
