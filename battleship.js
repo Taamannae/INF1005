@@ -10,6 +10,7 @@ messages = {
     badSpot: 'Uh oh'
 }
 
+const LETTERS = "ABCDEFGHIJ";
 
 const SHIPS = [
     {name: "Carrier", shipSize: 5},
@@ -22,7 +23,7 @@ const SHIPS = [
 
 boards = {
     player: {
-        fullBoard: undefined,
+        fullBoard: '',
         viewBoard: [
             [0,0,0,0,0,0,0,0,0,0 ],
             [0,0,0,0,0,0,0,0,0,0 ],
@@ -38,7 +39,7 @@ boards = {
         moves: []
     },
     computer: {
-        fullBoard: generateBoard(),
+        fullBoard: '',
         viewBoard: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -83,17 +84,21 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-
-function spotParser(spot) {
-    const LETTERS = "ABCDEFGHIJ";
+function spotValidator(spot) {
     if (spot.length > 3) {
-       return messages.badSpot
+        return false
     }
     let row = spot[0];
     let col = parseInt(spot.slice(1));
-    if (!LETTERS.includes(row) || isNaN(col) || col > 10) {
-        return messages.badSpot
+    if (!LETTERS.includes(row.toUpperCase()) || isNaN(col) || col > 10) {
+        return false
     }
+    return true;
+}
+
+function spotParser(spot) {
+    let row = spot[0];
+    let col = parseInt(spot.slice(1));
     return [parseInt(row, 36) - 10, col - 1]
 
 }
@@ -202,10 +207,18 @@ function generateBoard() {
     return [board, shipCoords];
 }
 
+function winCondition() {
+    return false
+}
+
 let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
 
 
 function play() {
+    let computerBoard = generateBoard()
+    boards.computer.fullBoard = computerBoard[0];
+    boards.computer.shipLocation = computerBoard[1];
+
     while (!GAME_STATE.gameEnded) {
         switch (GAME_STATE.stage) {
             case 0: //Welcome State
@@ -224,19 +237,43 @@ function play() {
                     boardNum = parseInt(boardNum)
                 }
 
-                boards.player.fullBoard = potentialBoards[parseInt(boardNum) - 1]
+                boards.player.fullBoard = potentialBoards[parseInt(boardNum) - 1][0]
                 boards.player.shipLocation = potentialBoards[parseInt(boardNum) - 1][1]
-                console.log(boards.player.shipLocation);
-
                 GAME_STATE.stage += 1;
-
                 break;
             case 1: // Player Turn
-                console.log('heleleloe')
-                GAME_STATE.gameEnded = true
+                console.log("Let's start the game")
+                console.log("Here is your game view \n")
+                console.log(printBoard(boards.player.viewBoard))
+
+                var spot = prompt('Where do you want to place the hit?');
+                let valid = spotValidator(spot)
+
+                while (!valid) {
+                    spot = prompt('Sorry, it must be alpha-numeric like "B9". Please try again: ');
+                    valid = spotValidator(spot)
+
+                }
+                spot = spotParser(spot)
+
+
+                boards.player.viewBoard[spot[0]][spot[1]] = "X"
+                if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
+                    console.log("Nice! You got a hit")
+                    console.log(printBoard(boards.player.viewBoard))
+                    boards.player.fullBoard[spot[0]][spot[1]] = "X"
+                    GAME_STATE.stage += 1;
+
+                } else {
+                    console.log("Boo! You missed")
+                    console.log(printBoard(boards.player.viewBoard))
+                    GAME_STATE.stage += 1;
+                }
+        
                 break;
             case 2: // Computer Turn
-                console.log('heleleloe')
+                console.log('Now its the computers turn')
+                GAME_STATE.gameEnded = true
                 break;
 
             
