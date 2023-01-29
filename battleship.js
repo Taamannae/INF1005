@@ -100,7 +100,6 @@ function spotParser(spot) {
     let row = spot[0];
     let col = parseInt(spot.slice(1));
     return [parseInt(row, 36) - 10, col - 1]
-
 }
 
 function generateBoard() {
@@ -116,9 +115,7 @@ function generateBoard() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
-
     shipCoords = [];
-
     for (let ship = 0; ship < SHIPS.length; ship++) {
         shipSize = SHIPS[ship].shipSize
         shipComplete = false;
@@ -215,9 +212,12 @@ let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
 
 
 function play() {
+
     let computerBoard = generateBoard()
     boards.computer.fullBoard = computerBoard[0];
     boards.computer.shipLocation = computerBoard[1];
+
+    console.log(boards.computer.shipLocation);
 
     while (!GAME_STATE.gameEnded) {
         switch (GAME_STATE.stage) {
