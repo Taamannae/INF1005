@@ -126,30 +126,30 @@ function checkHit(spot, type) {
         }
         GAME_STATE.stage += 1;
     } else {
-        //computer move
-    }
-}
-
-function computerTurn() {
-
-    var successfulMove = false;
-    while (!successfulMove) {
-        var move = [getRandomInt(9), getRandomInt(9)];
-        if (boards.player.viewBoard[move[1]][move[0]] == 'X') {
-            continue
-        }
-
-        if (boards.player.fullBoard[move[0]][move[1]] == 1) {
-            boards.player.viewBoard[move[0]][move[1]] = '✓'
+        if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
+            boards.player.viewBoard[spot[0]][spot[1]] = '✓'
             console.log("Aww! They got a hit")
             printBoard(boards.player.fullBoard)
         } else {
-            boards.player.viewBoard[move[0]][move[1]] = 'X'
+            boards.player.viewBoard[spot[0]][spot[1]] = 'X'
             console.log("Nice! They missed")
             printBoard(boards.player.fullBoard)
 
         }
-        successfulMove = true;
+        GAME_STATE.stage -= 1;
+
+    }
+}
+
+function computerTurn() {
+    var successfulSpot = false;
+    while (!successfulSpot) {
+        var spot = [getRandomInt(9), getRandomInt(9)];
+        if (boards.player.viewBoard[spot[1]][spot[0]] == 'X') {
+            continue
+        }
+        checkHit(spot, 'COMPUTER')
+        successfulSpot = true;
     }
 
 }
@@ -171,7 +171,6 @@ function play() {
                 break;
             case 2: // Computer Turn
                 computerTurn()
-                GAME_STATE.stage -= 1;
                 break;
 
             
