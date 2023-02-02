@@ -1,5 +1,6 @@
 import promptSync from 'prompt-sync';
 import { printBoard, 
+        getRandomInt,
         print,
         spotValidator,
         spotParser,
@@ -129,6 +130,31 @@ function checkHit(spot, type) {
     }
 }
 
+function computerTurn() {
+
+    var successfulMove = false;
+    while (!successfulMove) {
+        var move = [getRandomInt(9), getRandomInt(9)];
+        if (boards.player.viewBoard[move[1]][move[0]] == 'X') {
+            continue
+        }
+
+        if (boards.player.fullBoard[move[0]][move[1]] == 1) {
+            boards.player.viewBoard[move[0]][move[1]] = '✓'
+            console.log("Aww! They got a hit")
+            printBoard(boards.player.fullBoard)
+        } else {
+            boards.player.viewBoard[move[0]][move[1]] = 'X'
+            console.log("Nice! They missed")
+            printBoard(boards.player.fullBoard)
+
+        }
+        successfulMove = true;
+    }
+
+}
+
+
 function play() {
     while (!GAME_STATE.gameEnded) {
         switch (GAME_STATE.stage) {
@@ -144,8 +170,8 @@ function play() {
                 playerTurn()
                 break;
             case 2: // Computer Turn
-                print('Now its the computers turn')
-                GAME_STATE.gameEnded = true
+                computerTurn()
+                GAME_STATE.stage -= 1;
                 break;
 
             
