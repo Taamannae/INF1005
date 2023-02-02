@@ -11,7 +11,7 @@ export function print(message) {
     return ''
 }
 
-export function prettifyBoard(board) {
+export function printBoard(board) {
     /*
     Input: An array of arrays
     This function will take a board (an array of arrays)
@@ -60,6 +60,8 @@ export function prettifyBoard(board) {
             console.log(i + 1, board[i].join().replaceAll("0", "_").replaceAll("1", "O"))
         }
     }
+    console.log('\n\n')
+
     return ''
 }
 

@@ -1,5 +1,5 @@
 import promptSync from 'prompt-sync';
-import { prettifyBoard, 
+import { printBoard, 
         print,
         spotValidator,
         spotParser,
@@ -80,11 +80,13 @@ function chooseBoard() {
     let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
 
     print('1) Option 1')
-    print(prettifyBoard(potentialBoards[0][0]))
+    printBoard(potentialBoards[0][0])
     print('2) Option 2')
-    print(prettifyBoard(potentialBoards[1][0]))
+    printBoard(potentialBoards[1][0])
     print('3) Option 3')
-    print(prettifyBoard(potentialBoards[2][0]))
+    printBoard(potentialBoards[2][0])
+
+
     var boardNum = prompt('Select one of the above boards to play on:');
 
     while (isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
@@ -97,7 +99,7 @@ function chooseBoard() {
 }
 
 function playerTurn() {
-    print(prettifyBoard(boards.computer.viewBoard))
+    printBoard(boards.computer.viewBoard)
     var spot = prompt('Where do you want to place the hit?');
     let valid = spotValidator(spot)
 
@@ -115,11 +117,11 @@ function checkHit(spot, type) {
         if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
             boards.computer.viewBoard[spot[0]][spot[1]] = "X"
             print("Nice! You got a hit")
-            print(prettifyBoard(boards.computer.viewBoard))
+            printBoard(boards.computer.viewBoard)
         } else {
             boards.computer.viewBoard[spot[0]][spot[1]] = "-"
             print("Boo! You missed")
-            print(prettifyBoard(boards.computer.viewBoard))
+            printBoard(boards.computer.viewBoard)
         }
         GAME_STATE.stage += 1;
     } else {
