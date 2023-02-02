@@ -22,18 +22,7 @@ const messages = {
 var boards = {
     player: {
         fullBoard: '',
-        viewBoard: [
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-            [0,0,0,0,0,0,0,0,0,0 ],
-        ],
+        viewBoard: '',
         moves: []
     },
     computer: {
@@ -96,6 +85,7 @@ function chooseBoard() {
     }
 
     boards.player.fullBoard = potentialBoards[parseInt(boardNum) - 1][0]
+    boards.player.viewBoard = potentialBoards[parseInt(boardNum) - 1][0]
     boards.player.shipLocation = potentialBoards[parseInt(boardNum) - 1][1]
 }
 
