@@ -127,13 +127,13 @@ function checkHit(spot, type) {
         GAME_STATE.stage += 1;
     } else {
         if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
-            boards.player.viewBoard[spot[0]][spot[1]] = '✓'
-            console.log("Aww! They got a hit")
-            printBoard(boards.player.fullBoard)
+            boards.player.viewBoard[spot[0]][spot[1]] = "✓"
+            console.log("Aww! Your ship got a hit") // JD - update to message
+            printBoard(boards.player.viewBoard) // JD - updated to view board so know where they hit b/c didnt update to "✓" when hit
         } else {
-            boards.player.viewBoard[spot[0]][spot[1]] = 'X'
+            boards.player.viewBoard[spot[0]][spot[1]] = "X"
             console.log("Nice! They missed")
-            printBoard(boards.player.fullBoard)
+            printBoard(boards.player.viewBoard) //JD - updated to view board so know where they missed , with full board the "_" didnt update when missed 
 
         }
         GAME_STATE.stage -= 1;
@@ -145,8 +145,8 @@ function computerTurn() {
     var successfulSpot = false;
     while (!successfulSpot) {
         var spot = [getRandomInt(9), getRandomInt(9)];
-        if (boards.player.viewBoard[spot[1]][spot[0]] == 'X') {
-            continue
+        if (boards.player.viewBoard[spot[1]][spot[0]] == '_') {
+            continue //JD - not sure if im interpretating this correctly??? changed 'X' to '_' because '_' is when the ship hasnt been chosen yet
         }
         checkHit(spot, 'COMPUTER')
         successfulSpot = true;
