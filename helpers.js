@@ -111,7 +111,7 @@ export function spotValidator(spot) {
     const LETTERS = "ABCDEFGHIJ";
 
     //The longest spot will be 3 chars (e.g A10)
-    if (spot.length > 3) {
+    if (spot.length > 3 || spot.length == 0) {
         return false
     }
     //Parsing the row and column out

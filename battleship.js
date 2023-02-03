@@ -91,7 +91,7 @@ function chooseBoard() {
 
     var boardNum = prompt('Select one of the above boards to play on:');
 
-    while (isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
+    while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
         boardNum = prompt('Sorry, not valid. Try again:  ');
         boardNum = parseInt(boardNum)
     }
