@@ -1,17 +1,10 @@
-const SHIPS = {
-    player: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},],
-    computer: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},]
-    }
+const SHIPS = [
+    { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
+    { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
+    { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
+    { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
+    { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},
+]
 
 
 export function printStatus(SHIPS) {
