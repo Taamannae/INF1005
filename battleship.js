@@ -38,6 +38,7 @@ var boards = {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ],
+        computerQueue: []
     },
     empty: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -103,45 +104,83 @@ function playerTurn() {
 
 function checkHit(spot, type) {
     if (type == 'PLAYER') {
+        GAME_STATE.stage += 1;
         if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
             boards.computer.viewBoard[spot[0]][spot[1]] = "X"
             print("Nice! You got a hit")
             printBoard(boards.computer.viewBoard)
+            return true
         } else {
             boards.computer.viewBoard[spot[0]][spot[1]] = "-"
             print("Boo! You missed")
             printBoard(boards.computer.viewBoard)
         }
-        GAME_STATE.stage += 1;
     } else {
+        GAME_STATE.stage -= 1;
         if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
             boards.player.viewBoard[spot[0]][spot[1]] = "✓"
             console.log("Aww! Your ship got a hit") // JD - update to message
             printBoard(boards.player.viewBoard) // JD - updated to view board so know where they hit b/c didnt update to "✓" when hit
+            return true
         } else {
             boards.player.viewBoard[spot[0]][spot[1]] = "X"
             console.log("Nice! They missed")
             printBoard(boards.player.viewBoard) //JD - updated to view board so know where they missed , with full board the "_" didnt update when missed 
 
         }
-        GAME_STATE.stage -= 1;
-
     }
+    return false
 }
 
 function computerTurn() {
     var successfulSpot = false;
     while (!successfulSpot) {
+        var wasQueue = false
         var spot = [getRandomInt(9), getRandomInt(9)];
-        if (boards.player.viewBoard[spot[1]][spot[0]] == 1 || boards.player.viewBoard[spot[1]][spot[0]] == '✓') {
-            continue //JD - not sure if im interpretating this correctly??? changed 'X' to '_' because '_' is when the ship hasnt been chosen yet
+
+        if (boards.computer.computerQueue.length > 0) {
+            spot = boards.computer.computerQueue[0];
+            var previous = boards.computer.computerQueue[1];
+            boards.computer.computerQueue.shift();
+            boards.computer.computerQueue.shift();
+
+            if (boards.player.viewBoard[previous[0]][previous[1]] !== '✓') {
+                console.log('check mark statege')
+                continue;
+            }
+            wasQueue = true;
         }
-        checkHit(spot, 'COMPUTER')
+        if (boards.player.viewBoard[spot[0]][spot[1]] == '-' || boards.player.viewBoard[spot[0]][spot[1]] == '✓') {
+            continue
+        }
+
+        if (checkHit(spot, 'COMPUTER') && !wasQueue) {
+            console.log('i ade it')
+            // If we hit a new ship, add the horizontal and vertical squares nearby to try and sink it before trying
+            // any more random guesses.
+            for (let i = 1; i <= 4; ++i) {
+                if (spot[0] - i >= 0) {
+                    boards.computer.computerQueue.push([spot[0] - i, spot[1]]);
+                    boards.computer.computerQueue.push([spot[0] - i + 1, spot[1]]);
+                }
+                if (spot[0] + i < 9) {
+                    boards.computer.computerQueue.push([spot[0] + i, spot[1]]);
+                    boards.computer.computerQueue.push([spot[0] + i - 1, spot[1]]);
+                }
+                if (spot[1] - i >= 0) {
+                    boards.computer.computerQueue.push([spot[0], spot[1] - i]);
+                    boards.computer.computerQueue.push([spot[0], spot[1] - i + 1]);
+                }
+                if (spot[1] + i < 9) {
+                    boards.computer.computerQueue.push([spot[0], spot[1] + i]);
+                    boards.computer.computerQueue.push([spot[0], spot[1] + i - 1]);
+                }
+            }
+            console.log('endQueue', boards.computer.computerQueue)
+        }
         successfulSpot = true;
     }
-
 }
-
 
 function play() {
     while (!GAME_STATE.gameEnded) {
