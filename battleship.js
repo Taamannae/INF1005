@@ -23,7 +23,6 @@ var boards = {
     player: {
         fullBoard: '',
         viewBoard: '',
-        moves: []
     },
     computer: {
         fullBoard: '',
@@ -39,7 +38,6 @@ var boards = {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ],
-        moves: []
     },
     empty: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -135,7 +133,7 @@ function computerTurn() {
     var successfulSpot = false;
     while (!successfulSpot) {
         var spot = [getRandomInt(9), getRandomInt(9)];
-        if (boards.player.viewBoard[spot[1]][spot[0]] == '_') {
+        if (boards.player.viewBoard[spot[1]][spot[0]] == 1 || boards.player.viewBoard[spot[1]][spot[0]] == '✓') {
             continue //JD - not sure if im interpretating this correctly??? changed 'X' to '_' because '_' is when the ship hasnt been chosen yet
         }
         checkHit(spot, 'COMPUTER')
