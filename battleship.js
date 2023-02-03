@@ -18,7 +18,20 @@ const messages = {
     welcome: "Hello, choose a thing",
     badSpot: 'Uh oh'
 }
-
+const SHIPS = {
+    player: [
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},],
+    computer: [
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},]
+    }
 
 var boards = {
     player: {
@@ -105,7 +118,7 @@ function playerTurn() {
 function checkHit(spot, type) {
     if (type == 'PLAYER') {
         if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
-            boards.computer.viewBoard[spot[0]][spot[1]] = "X"
+            boards.computer.viewBoard[spot[0]][spot[1]] = "X" 
             print("Nice! You got a hit")
             printBoard(boards.computer.viewBoard)
             
