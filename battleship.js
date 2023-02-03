@@ -4,7 +4,8 @@ import { printBoard,
         print,
         spotValidator,
         spotParser,
-        generateBoard } from './helpers.js';
+        generateBoard,
+        printStatus,} from './helpers.js';
 
 const prompt = promptSync()
 
@@ -107,6 +108,7 @@ function checkHit(spot, type) {
             boards.computer.viewBoard[spot[0]][spot[1]] = "X"
             print("Nice! You got a hit")
             printBoard(boards.computer.viewBoard)
+            
         } else {
             boards.computer.viewBoard[spot[0]][spot[1]] = "-"
             print("Boo! You missed")
@@ -134,7 +136,7 @@ function computerTurn() {
     while (!successfulSpot) {
         var spot = [getRandomInt(9), getRandomInt(9)];
         if (boards.player.viewBoard[spot[1]][spot[0]] == 1 || boards.player.viewBoard[spot[1]][spot[0]] == '✓') {
-            continue //JD - not sure if im interpretating this correctly??? changed 'X' to '_' because '_' is when the ship hasnt been chosen yet
+            continue 
         }
         checkHit(spot, 'COMPUTER')
         successfulSpot = true;
@@ -156,6 +158,8 @@ function play() {
             case 1: // Player Turn
                 print("Here is your game view \n")
                 playerTurn()
+                printStatus(SHIPS.computer);
+                console.log("")
                 break;
             case 2: // Computer Turn
                 computerTurn()

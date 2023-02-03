@@ -1,10 +1,15 @@
-const SHIPS = [
-    { name: "Carrier", shipSize: 5 },
-    { name: "Battleship", shipSize: 4 },
-    { name: "Cruiser", shipSize: 3 },
-    { name: "Submarine", shipSize: 3 },
-    { name: "Destroyer", shipSize: 2 },
-]
+
+export function printStatus(SHIPS) {
+    console.log("Computer Board Status");
+    let cumulativeHits = 0;
+    for (let i = 0; i < SHIPS.length; i++) {
+      let ship = SHIPS[i];
+      cumulativeHits += ship.hitTotal;
+        console.log(ship.name + " (" + ship.shipSize+ ")" + ": " + (ship.shipSunk ? "Sunk" : "Not Sunk"))
+      ;}
+      console.log("Total Hits: " + cumulativeHits);
+    
+  }
 
 export function print(message) {
     console.log(message)
