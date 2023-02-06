@@ -4,7 +4,8 @@ import { printBoard,
         print,
         spotValidator,
         spotParser,
-        generateBoard } from './helpers.js';
+        generateBoard,
+        printStatus,} from './helpers.js';
 
 const prompt = promptSync()
 
@@ -17,7 +18,20 @@ const messages = {
     welcome: "Hello, choose a thing",
     badSpot: 'Uh oh'
 }
-
+const SHIPS = {
+    player: [
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},],
+    computer: [
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},]
+    }
 
 var boards = {
     player: {
@@ -78,7 +92,7 @@ function chooseBoard() {
 
     var boardNum = prompt('Select one of the above boards to play on:');
 
-    while (isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
+    while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
         boardNum = prompt('Sorry, not valid. Try again:  ');
         boardNum = parseInt(boardNum)
     }
@@ -106,7 +120,7 @@ function checkHit(spot, type) {
     if (type == 'PLAYER') {
         GAME_STATE.stage += 1;
         if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
-            boards.computer.viewBoard[spot[0]][spot[1]] = "X"
+            boards.computer.viewBoard[spot[0]][spot[1]] = "X" 
             print("Nice! You got a hit")
             printBoard(boards.computer.viewBoard)
             return true
@@ -137,7 +151,6 @@ function computerTurn() {
     while (!successfulSpot) {
         var wasQueue = false
         var spot = [getRandomInt(9), getRandomInt(9)];
-
         if (boards.computer.computerQueue.length > 0) {
             spot = boards.computer.computerQueue[0];
             var previous = boards.computer.computerQueue[1];
@@ -145,7 +158,6 @@ function computerTurn() {
             boards.computer.computerQueue.shift();
 
             if (boards.player.viewBoard[previous[0]][previous[1]] !== '✓') {
-                console.log('check mark statege')
                 continue;
             }
             wasQueue = true;
@@ -155,7 +167,6 @@ function computerTurn() {
         }
 
         if (checkHit(spot, 'COMPUTER') && !wasQueue) {
-            console.log('i ade it')
             // If we hit a new ship, add the horizontal and vertical squares nearby to try and sink it before trying
             // any more random guesses.
             for (let i = 1; i <= 4; ++i) {
@@ -176,8 +187,6 @@ function computerTurn() {
                     boards.computer.computerQueue.push([spot[0], spot[1] + i - 1]);
                 }
             }
-            console.log('endQueue', boards.computer.computerQueue)
-        }
         successfulSpot = true;
     }
 }
@@ -195,6 +204,8 @@ function play() {
             case 1: // Player Turn
                 print("Here is your game view \n")
                 playerTurn()
+                printStatus(SHIPS.computer);
+                console.log("")
                 break;
             case 2: // Computer Turn
                 computerTurn()

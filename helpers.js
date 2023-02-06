@@ -1,10 +1,23 @@
 const SHIPS = [
-    { name: "Carrier", shipSize: 5 },
-    { name: "Battleship", shipSize: 4 },
-    { name: "Cruiser", shipSize: 3 },
-    { name: "Submarine", shipSize: 3 },
-    { name: "Destroyer", shipSize: 2 },
+    { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords: [] },
+    { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords: []},
+    { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords: []},
+    { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords: []},
+    { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords: []},
 ]
+
+
+export function printStatus(SHIPS) {
+    console.log("Computer Board Status");
+    let cumulativeHits = 0;
+    for (let i = 0; i < SHIPS.length; i++) {
+      let ship = SHIPS[i];
+      cumulativeHits += ship.hitTotal;
+        console.log(ship.name + " (" + ship.shipSize+ ")" + ": " + (ship.shipSunk ? "Sunk" : "Not Sunk"))
+      ;}
+      console.log("Total Hits: " + cumulativeHits);
+    
+  }
 
 export function print(message) {
     console.log(message)
@@ -98,7 +111,7 @@ export function spotValidator(spot) {
     const LETTERS = "ABCDEFGHIJ";
 
     //The longest spot will be 3 chars (e.g A10)
-    if (spot.length > 3) {
+    if (spot.length > 3 || spot.length == 0) {
         return false
     }
     //Parsing the row and column out
@@ -170,9 +183,9 @@ export function generateBoard() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
+    var ship = [];
 
     //tracking where the ships start and
-    var shipCoords = [];
     for (let ship = 0; ship < SHIPS.length; ship++) {
         var shipSize = SHIPS[ship].shipSize
         var shipComplete = false;
@@ -216,6 +229,7 @@ export function generateBoard() {
                 } else {
                     for (let i = UDMin; i <= UDMax; i++) {
                         board[i][RLMax] = 1
+                        SHIPS[ship].coords.push([i, RLMax])
                     }
                 }
             } else if (direction == 1) { // right
@@ -228,6 +242,8 @@ export function generateBoard() {
                 } else {
                     for (let i = RLMin; i <= RLMax; i++) {
                         board[UDMax][i] = 1
+                        SHIPS[ship].coords.push([UDMax, i])
+
                     }
                 }
             } else if (direction == 2) { // right
@@ -240,6 +256,8 @@ export function generateBoard() {
                 } else {
                     for (let i = UDMin; i <= UDMax; i++) {
                         board[i][RLMax] = 1
+                        SHIPS[ship].coords.push([i, RLMax])
+
                     }
                 }
             } else if (direction == 3) { // right
@@ -252,12 +270,13 @@ export function generateBoard() {
                 } else {
                     for (let i = RLMin; i <= RLMax; i++) {
                         board[UDMax][i] = 1
+                        SHIPS[ship].coords.push([UDMax, i])
+
                     }
                 }
             }
-            shipCoords.push([start, end, SHIPS[ship]])
             shipComplete = true;
         }
     }
-    return [board, shipCoords];
+    return [board, SHIPS];
 }
