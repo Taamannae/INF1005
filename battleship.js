@@ -20,17 +20,17 @@ const messages = {
 }
 const SHIPS = {
     player: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},],
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords:[]},],
     computer: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false },
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false},]
+        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords:[] },
+        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
+        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords:[]},]
     }
 
 var boards = {
@@ -133,14 +133,13 @@ function checkHit(spot, type) {
         GAME_STATE.stage -= 1;
         if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
             boards.player.viewBoard[spot[0]][spot[1]] = "✓"
-            console.log("Aww! Your ship got a hit") // JD - update to message
-            printBoard(boards.player.viewBoard) // JD - updated to view board so know where they hit b/c didnt update to "✓" when hit
+            console.log("Aww! Your ship got a hit") 
+            printBoard(boards.player.viewBoard) 
             return true
         } else {
             boards.player.viewBoard[spot[0]][spot[1]] = "X"
             console.log("Nice! They missed")
-            printBoard(boards.player.viewBoard) //JD - updated to view board so know where they missed , with full board the "_" didnt update when missed 
-
+            printBoard(boards.player.viewBoard) 
         }
     }
     return false
@@ -190,6 +189,7 @@ function computerTurn() {
         successfulSpot = true;
     }
 }
+} // jd - added missing bracket  here but causes problems
 
 function play() {
     while (!GAME_STATE.gameEnded) {
@@ -216,6 +216,5 @@ function play() {
             // code block
         }
     }
-}
-
+} // wouldnt run when I added another } here
 play()
