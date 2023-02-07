@@ -1,10 +1,3 @@
-const SHIPS = [
-    { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords: [] },
-    { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords: []},
-    { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords: []},
-    { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords: []},
-    { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords: []},
-]
 
 
 export function printStatus(SHIPS) {
@@ -86,7 +79,7 @@ export function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-export function spotValidator(spot) {
+export function spotValidator(spot, board) {
     /*
     Input: String
 
@@ -119,6 +112,12 @@ export function spotValidator(spot) {
     let row = parseInt(spot.slice(1)); // The number
     //Checks that Col is a letter from A-J and col is a number less than 11
     if (!LETTERS.includes(col.toUpperCase()) || isNaN(row) || row > 10) {
+        return false
+    }
+
+    let realSpot = spotParser(spot)
+
+    if (board[realSpot[0]][realSpot[1]] === "✓" || board[realSpot[0]][realSpot[1]] === "X") {
         return false
     }
     return true;
@@ -183,7 +182,15 @@ export function generateBoard() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
-    var ship = [];
+
+    var SHIPS = [
+        { name: "Carrier", shipSize: 5, hitTotal: 0, shipSunk: false, coords: [] },
+        { name: "Battleship", shipSize: 4, hitTotal: 0, shipSunk: false, coords: [] },
+        { name: "Cruiser", shipSize: 3, hitTotal: 0, shipSunk: false, coords: [] },
+        { name: "Submarine", shipSize: 3, hitTotal: 0, shipSunk: false, coords: [] },
+        { name: "Destroyer", shipSize: 2, hitTotal: 0, shipSunk: false, coords: [] },
+    ]
+
 
     //tracking where the ships start and
     for (let ship = 0; ship < SHIPS.length; ship++) {

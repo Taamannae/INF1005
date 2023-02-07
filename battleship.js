@@ -11,27 +11,14 @@ const prompt = promptSync()
 
 var GAME_STATE = {
     stage: 0,
-    gameEnded: false
+    gameEnded: false,
+    gameWinnerPlayer: false,
 }
 
 const messages = {
     welcome: "Hello, choose a thing",
     badSpot: 'Uh oh'
 }
-const SHIPS = {
-    player: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords:[]},],
-    computer: [
-        { name: "Carrier", shipSize: 5, hitTotal:0, shipSunk: false, coords:[] },
-        { name: "Battleship", shipSize: 4, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Cruiser", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Submarine", shipSize: 3, hitTotal:0, shipSunk: false, coords:[]},
-        { name: "Destroyer", shipSize: 2, hitTotal:0, shipSunk: false, coords:[]},]
-    }
 
 var boards = {
     player: {
@@ -68,8 +55,14 @@ var boards = {
     ],
 }
 
-function winCondition() {
-    return false
+function winCondition(player) {
+    for (let i = 0; i < boards[player].shipLocation.length; i++) {
+        if (boards[player].shipLocation[i].shipSunk) {
+            continue
+        }
+        return false
+    }
+    return true
 }
 
 function computerSetup() {
@@ -89,7 +82,6 @@ function chooseBoard() {
     print('3) Option 3')
     printBoard(potentialBoards[2][0])
 
-
     var boardNum = prompt('Select one of the above boards to play on:');
 
     while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
@@ -103,25 +95,61 @@ function chooseBoard() {
 }
 
 function playerTurn() {
-    printBoard(boards.computer.viewBoard)
     var spot = prompt('Where do you want to place the hit?');
-    let valid = spotValidator(spot)
+    let valid = spotValidator(spot, boards.computer.viewBoard)
 
     while (!valid) {
         spot = prompt('Sorry, it must be alpha-numeric like "B9". Please try again: ');
-        valid = spotValidator(spot)
+        valid = spotValidator(spot, boards.computer.viewBoard)
 
     }
     spot = spotParser(spot)
     checkHit(spot, 'PLAYER')
 }
 
+function findShip(player, spot) {
+    //loop through the ships
+    for (let i = 0; i < boards[player].shipLocation.length; i++) {
+        //loop through the coords
+        for (let j = 0; j < boards[player].shipLocation[i].coords.length; j++) {
+            //Check if coord X matches the hit spot
+            if (boards[player].shipLocation[i].coords[j][0] === spot[0]){
+                //Check if coord Y matches the hit spot
+                if (boards[player].shipLocation[i].coords[j][1] === spot[1]) {
+
+                    // Increase hit total of the ship
+                    boards[player].shipLocation[i].hitTotal += 1;
+
+                    // Check if the hit results in a sink by comparing hit total to shipsize
+                    if (boards[player].shipLocation[i].hitTotal >= boards[player].shipLocation[i].shipSize) {
+                        boards[player].shipLocation[i].shipSunk = true
+                        let message = `Nice job! You have SUNK their ${boards[player].shipLocation[i].name}`
+                        if (player === 'player') {
+                            message = `Oh no! They have SUNK your ${boards[player].shipLocation[i].name}`
+                        }
+                        return message
+                    }
+
+                    let message = `Nice job! You have HIT their ${boards[player].shipLocation[i].name}`
+                    if (player === 'player') {
+                        message = `Oh no! They have hit your ${boards[player].shipLocation[i].name}`
+                    }
+                    return message
+                }
+                continue
+            } else {
+                continue
+            }
+        }
+    
+        }
+}
 function checkHit(spot, type) {
     if (type == 'PLAYER') {
-        GAME_STATE.stage += 1;
         if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
             boards.computer.viewBoard[spot[0]][spot[1]] = "X" 
-            print("Nice! You got a hit")
+            let hitShip = findShip("computer", spot)
+            console.log(hitShip)
             printBoard(boards.computer.viewBoard)
             return true
         } else {
@@ -130,10 +158,10 @@ function checkHit(spot, type) {
             printBoard(boards.computer.viewBoard)
         }
     } else {
-        GAME_STATE.stage -= 1;
         if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
             boards.player.viewBoard[spot[0]][spot[1]] = "✓"
-            console.log("Aww! Your ship got a hit") 
+            let hitShip = findShip("player", spot)
+            console.log(hitShip)
             printBoard(boards.player.viewBoard) 
             return true
         } else {
@@ -188,7 +216,6 @@ function computerTurn() {
             }
     }
         successfulSpot = true;
-
     }
 } // jd - added missing bracket  here but causes problems
 
@@ -204,15 +231,36 @@ function play() {
                 break;
             case 1: // Player Turn
                 print("Here is your game view \n")
+                printBoard(boards.computer.viewBoard)
                 playerTurn()
-                printStatus(SHIPS.computer);
-                console.log("")
+                var checkWin = winCondition('computer')
+                if (checkWin) {
+                    GAME_STATE.gameWinnerPlayer = true
+                    GAME_STATE.stage = 3
+                    break
+                }
+                GAME_STATE.stage += 1;
                 break;
             case 2: // Computer Turn
                 computerTurn()
-                break;
+                var checkWin = winCondition('player')
 
-            
+                if (checkWin) {
+                    GAME_STATE.gameWinnerPlayer = false
+                    GAME_STATE.stage = 4
+                    break
+                }
+                GAME_STATE.stage -= 1;
+                break;
+            case 3: // Game END Player won
+                console.log('YOU WON WOHOOO')
+                GAME_STATE.gameEnded = true
+
+                break;
+            case 4: // Game END computer won
+                console.log('Computer won, booo')
+                GAME_STATE.gameEnded = true
+                break;
             default:
             // code block
         }
