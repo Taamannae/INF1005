@@ -186,9 +186,10 @@ function computerTurn() {
                     boards.computer.computerQueue.push([spot[0], spot[1] + i - 1]);
                 }
             }
-        successfulSpot = true;
     }
-}
+        successfulSpot = true;
+
+    }
 } // jd - added missing bracket  here but causes problems
 
 function play() {
