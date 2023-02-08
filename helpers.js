@@ -1,4 +1,6 @@
+import { messages } from "./messages.js";
 
+const commands = ['help', 'rules', 'status']
 
 export function printStatus(SHIPS) {
     console.log("Computer Board Status");
@@ -79,6 +81,15 @@ export function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+function printHelpMessages(type) {
+    if (type === 'help') {
+        console.log(messages.help)
+    } else if (type === 'rules') {
+        console.log(messages.welcome)
+    } else {
+    }
+}
+
 export function spotValidator(spot, board) {
     /*
     Input: String
@@ -102,6 +113,11 @@ export function spotValidator(spot, board) {
 
     //Acceptable columns
     const LETTERS = "ABCDEFGHIJ";
+
+    if (commands.includes(spot.toLowerCase())) {
+        printHelpMessages(spot)
+        return false
+    }
 
     //The longest spot will be 3 chars (e.g A10)
     if (spot.length > 3 || spot.length == 0) {

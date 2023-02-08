@@ -233,12 +233,13 @@ function play() {
                 GAME_STATE.stage -= 1;
                 break;
             case 3: // Game END Player won
-                console.log('YOU WON WOHOOO')
+                console.clear()
+                console.log(Chalk.bgBlack.yellow(messages.youWon))
                 GAME_STATE.gameEnded = true
-
                 break;
             case 4: // Game END computer won
-                console.log('Computer won, booo')
+                console.clear()
+                console.log(messages.youLost)
                 GAME_STATE.gameEnded = true
                 break;
             default:
