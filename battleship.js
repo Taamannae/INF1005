@@ -42,7 +42,7 @@ const messages = {
 #  coordinates on a grid. The first player to sink all of the
 #  opponent's ships wins the game.
 #
-#  Plyer vs computer
+#  Player vs computer
 #
 #  How to Play:
 #  1. You will be given 3 boards to choose from that will represent your ships.
@@ -61,7 +61,7 @@ const messages = {
 
 
     `,
-    optionText: "First, you must select a game board.\nThis will represent the placement of your ships that the computer will try to hit \n",
+    optionText: "First, you must select a game board. Enter '1', '2', or '3'. \nThis will represent the placement of your ships that the computer will try to hit \n",
     optionNumber: function(num) {
         return `
 ###################
@@ -137,7 +137,7 @@ function chooseBoard() {
     print(messages.optionNumber(3))
     printBoard(potentialBoards[2][0])
 
-    var boardNum = prompt('Select one of the above boards to play on:');
+    var boardNum = prompt('Select one of the above boards to play on:  ');
 
     while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
         boardNum = prompt('Sorry, not valid. Try again:  ');
@@ -150,7 +150,7 @@ function chooseBoard() {
 }
 
 function playerTurn() {
-    var spot = prompt('Where do you want to place the hit?');
+    var spot = prompt('Where do you want to place the hit?  ');
     let valid = spotValidator(spot, boards.computer.viewBoard)
 
     while (!valid) {
@@ -272,21 +272,26 @@ function computerTurn() {
     }
         successfulSpot = true;
     }
-} // jd - added missing bracket  here but causes problems
+} 
 
 function play() {
     while (!GAME_STATE.gameEnded) {
         switch (GAME_STATE.stage) {
             case 0: //Welcome State
                 print(messages.welcome)
+                pause(6000)
                 print(messages.optionText)
+                pause(3000)
                 computerSetup()
                 chooseBoard()
+                pause(3000)
                 print("Let's start the game")
+                pause(1000)
                 GAME_STATE.stage += 1;
                 break;
             case 1: // Player Turn
                 print("Here is your game view \n")
+                pause(1000)
                 printBoard(boards.computer.viewBoard)
                 playerTurn()
                 var checkWin = winCondition('computer')
@@ -295,6 +300,17 @@ function play() {
                     GAME_STATE.stage = 3
                     break
                 }
+                var chooseNext = prompt("To view the status of the hits you made on Computer, type 'Status'. If you want to continue, type 'Continue' "); // new prompt to slow the game? 
+                while (chooseNext !== 'null') {
+                    if (chooseNext === "Status") {
+                      printStatus(boards.computer.shipLocation);
+                      break;
+                    } else if (chooseNext === "Continue") {
+                      break;
+                    } else {
+                      chooseNext = prompt('Sorry, not valid. Try again:  ');
+                    }
+                  }
                 GAME_STATE.stage += 1;
                 break;
             case 2: // Computer Turn
@@ -322,5 +338,5 @@ function play() {
             // code block
         }
     }
-} // wouldnt run when I added another } here
+} 
 play()
