@@ -123,6 +123,10 @@ export function spotValidator(spot, board) {
     return true;
 }
 
+export function pause(milliseconds) {
+    var dt = new Date();
+    while ((new Date()) - dt <= milliseconds) { /* Do nothing */ }
+}
 
 export function spotParser(spot) {
     /*
