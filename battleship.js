@@ -7,6 +7,10 @@ import { printBoard,
         spotParser,
         generateBoard,
         printStatus,} from './helpers.js';
+import { printPlayerViewBoardsHorizontal,
+         printBoardChoiceHorizontal,
+         printTurnStartMessage } from './printers.js'
+import { messages } from './messages.js';
 import Chalk from 'chalk';
 
 const prompt = promptSync()
@@ -14,59 +18,6 @@ var GAME_STATE = {
     stage: 0,
     gameEnded: false,
     gameWinnerPlayer: false,
-}
-
-const messages = {
-    welcome: `
-######################################################################
-#        ______       _   _   _        _____ _     _                 #
-#        | ___ \\     | | | | | |      /  ___| |   (_)                #
-#        | |_/ / __ _| |_| |_| | ___  \\ \`--.| | __ _ _ __            #
-#        | ___ \\/ _\` | __| __| |/ _ \\  \`--. \\ '_ \\| | '_ \\           #
-#        | |_/ / (_| | |_| |_| |  __/ /\\__/ / | | | | |_) |          #
-#        \\____/ \\__,_|\\__|\\__|_|\\___| \\____/|_| |_|_| .__/           #
-#                                                | |                 #
-#                                                |_|                 #
-#                                       )___(                        #
-#                                _______/__/_                        #
-#                        ___     /===========|   ___                 #
-#        ____       __   [\\\\\\]___/____________|__[///]   __          #
-#        \\   \_____[\\]__/___________________________\\__[//]___        #
-#         \\ INF1005                                            /     #
-#          \\                                                  /      #
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  #
-#                                                                    #
-#  Game Description:                                                 #
-#  Battleship is a two-player guessing game where players            #
-#  try to sink each other's hidden ships by calling out              #
-#  coordinates on a grid. The first player to sink all of the        #
-#  opponent's ships wins the game.                                   #
-#                                                                    #
-#  Player vs computer                                                #
-#                                                                    #
-#  How to Play:                                                      #
-#  1. You will be given 3 boards to choose from that will            #
-#     represent your ships.                                          #
-#  2. You will call out board coordinates from A1 to J10             #
-#     to try and hit ships.                                          #
-#  3. The computer will also call out coordinates to try             #
-#     and sink your hip.                                             #
-#  4. The first player to sink all 5 of their opponent's             #
-#     ships will win the game                                        #
-#                                                                    #
-#  Ships in Play and their lengths:                                  #
-#  1. Carrier - 5 units                                              #
-#  2. Battleship - 4 units                                           #
-#  3. Cruiser - 3 units                                              #
-#  4. Submarine - 3 units                                            #
-#  5. Destroyer - 2 units                                            #
-#                                                                    #
-######################################################################
-
-`,
-    optionText: "First, you must select a game board. Enter '1', '2', or '3'. \nThis will represent the placement of your ships that the computer will try to hit \n",
-    boardNum:'Select one of the above boards (1,2,3) to play on:  ',
-    badSpot: 'Uh oh'
 }
 
 var boards = {
@@ -121,40 +72,11 @@ function computerSetup() {
     return ''
 }
 
-function printBoardHorizontal(board1, board2, board3) {
-    console.log(Chalk.bgMagenta.black(`
-
-   ###################       ###################       ###################
-   #     Option 1    #       #     Option 2    #       #     Option 3    #
-   ###################       ###################       ###################
-`))
-
-    console.log('   A B C D E F G H I J       A B C D E F G H I J       A B C D E F G H I J')
-
-    //loop through the board
-    for (let i = 0; i < board1.length; i++) {
-        //If we're not on row 10, add a space because it's 2 digits 
-        if (i != 9) {
-            //print the row but replace the 0s (empty) with '_' and 1s (boat location) with 'O'
-            console.log(i + 1, '', 
-                board1[i].join().replaceAll("0", "_").replaceAll("1", "O"), '  ', 
-                i + 1, '', 
-                board2[i].join().replaceAll("0", "_").replaceAll("1", "O"), '  ', 
-                i + 1, '', 
-                board3[i].join().replaceAll("0", "_").replaceAll("1", "O"))
-        } else {
-            console.log(i + 1, board1[i].join().replaceAll("0", "_").replaceAll("1", "O"), '  ', i + 1, board2[i].join().replaceAll("0", "_").replaceAll("1", "O"), '  ', i + 1, board3[i].join().replaceAll("0", "_").replaceAll("1", "O"),)
-        }
-    }
-    console.log('\n\n')
-
-
-}
 
 function chooseBoard() {
     let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
 
-    printBoardHorizontal(potentialBoards[0][0], potentialBoards[1][0], potentialBoards[2][0])
+    printBoardChoiceHorizontal(potentialBoards[0][0], potentialBoards[1][0], potentialBoards[2][0])
 
     var boardNum = prompt(messages.boardNum);
 
@@ -169,16 +91,14 @@ function chooseBoard() {
 }
 
 function playerTurn() {
-    var spot = prompt('Where do you want to place the hit?  ');
+    var spot = prompt(messages.playerTurnPrompt);
     let valid = spotValidator(spot, boards.computer.viewBoard)
-
     while (!valid) {
         spot = prompt('Sorry, it must be alpha-numeric like "B9". Please try again: ');
         valid = spotValidator(spot, boards.computer.viewBoard)
-
     }
     spot = spotParser(spot)
-    checkHit(spot, 'PLAYER')
+    checkHit('computer', spot)
 }
 
 function findShip(player, spot) {
@@ -197,18 +117,9 @@ function findShip(player, spot) {
                     // Check if the hit results in a sink by comparing hit total to shipsize
                     if (boards[player].shipLocation[i].hitTotal >= boards[player].shipLocation[i].shipSize) {
                         boards[player].shipLocation[i].shipSunk = true
-                        let message = `Nice job! You have SUNK their ${boards[player].shipLocation[i].name}`
-                        if (player === 'player') {
-                            message = `Oh no! They have SUNK your ${boards[player].shipLocation[i].name}`
-                        }
-                        return message
+                        return messages.spotHitMessage(player, 'SUNK', boards[player].shipLocation[i].name)
                     }
-
-                    let message = `Nice job! You have HIT their ${boards[player].shipLocation[i].name}`
-                    if (player === 'player') {
-                        message = `Oh no! They have hit your ${boards[player].shipLocation[i].name}`
-                    }
-                    return message
+                    return messages.spotHitMessage(player, 'HIT', boards[player].shipLocation[i].name)
                 }
                 continue
             } else {
@@ -217,31 +128,15 @@ function findShip(player, spot) {
         }
     }
 }
-function checkHit(spot, type) {
-    if (type == 'PLAYER') {
-        if (boards.computer.fullBoard[spot[0]][spot[1]] == 1) {
-            boards.computer.viewBoard[spot[0]][spot[1]] = "X" 
-            let hitShip = findShip("computer", spot)
-            console.log(hitShip)
-            printBoard(boards.computer.viewBoard)
-            return true
-        } else {
-            boards.computer.viewBoard[spot[0]][spot[1]] = "-"
-            print("Boo! You missed")
-            printBoard(boards.computer.viewBoard)
-        }
+function checkHit(player, spot) {
+    if (boards[player].fullBoard[spot[0]][spot[1]] == 1) {
+        boards[player].viewBoard[spot[0]][spot[1]] = "✓" 
+        let hitShip = findShip(player, spot)
+        console.log(hitShip)
+        return true
     } else {
-        if (boards.player.fullBoard[spot[0]][spot[1]] == 1) {
-            boards.player.viewBoard[spot[0]][spot[1]] = "✓"
-            let hitShip = findShip("player", spot)
-            console.log(hitShip)
-            printBoard(boards.player.viewBoard) 
-            return true
-        } else {
-            boards.player.viewBoard[spot[0]][spot[1]] = "X"
-            console.log("Nice! They missed")
-            printBoard(boards.player.viewBoard) 
-        }
+        boards[player].viewBoard[spot[0]][spot[1]] = "X"
+        console.log(messages.missedMessage(player))
     }
     return false
 }
@@ -266,7 +161,7 @@ function computerTurn() {
             continue
         }
 
-        if (checkHit(spot, 'COMPUTER') && !wasQueue) {
+        if (checkHit('player', spot) && !wasQueue) {
             // If we hit a new ship, add the horizontal and vertical squares nearby to try and sink it before trying
             // any more random guesses.
             for (let i = 1; i <= 4; ++i) {
@@ -297,19 +192,18 @@ function play() {
         switch (GAME_STATE.stage) {
             case 0: //Welcome State
                 print(Chalk.bgBlack(messages.welcome))
-                print(Chalk.blue(messages.optionText))
-                pause(3000)
+                pause(1000)
                 computerSetup()
                 chooseBoard()
-                pause(3000)
-                print("Let's start the game")
+                pause(1000)
+                print(Chalk.bgBlue.black(messages.startGame))
                 pause(1000)
                 GAME_STATE.stage += 1;
                 break;
             case 1: // Player Turn
-                print("Here is your game view \n")
+                printTurnStartMessage()
+                printPlayerViewBoardsHorizontal(boards.player.fullBoard, boards.computer.viewBoard)
                 pause(1000)
-                printBoard(boards.computer.viewBoard)
                 playerTurn()
                 var checkWin = winCondition('computer')
                 if (checkWin) {
@@ -317,21 +211,12 @@ function play() {
                     GAME_STATE.stage = 3
                     break
                 }
-                var chooseNext = prompt("To view the status of the hits you made on Computer, type 'Status'. If you want to continue, type 'Continue' "); // new prompt to slow the game? 
-                while (chooseNext !== 'null') {
-                    if (chooseNext === "Status") {
-                      printStatus(boards.computer.shipLocation);
-                      break;
-                    } else if (chooseNext === "Continue") {
-                      break;
-                    } else {
-                      chooseNext = prompt('Sorry, not valid. Try again:  ');
-                    }
-                  }
                 GAME_STATE.stage += 1;
                 break;
             case 2: // Computer Turn
-                pause(3000)
+                pause(1000)
+                console.log(Chalk.bgMagenta.black.bold(messages.computerTurnMessage))
+                pause(2000)
                 computerTurn()
                 var checkWin = winCondition('player')
 
@@ -340,6 +225,8 @@ function play() {
                     GAME_STATE.stage = 4
                     break
                 }
+                pause(3000)
+
                 GAME_STATE.stage -= 1;
                 break;
             case 3: // Game END Player won
