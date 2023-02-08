@@ -123,6 +123,10 @@ export function spotValidator(spot, board) {
     return true;
 }
 
+export function spotPrettify(spot) {
+    return String.fromCharCode(65 + spot[1]) + (spot[0] + 1)
+}
+
 export function pause(milliseconds) {
     var dt = new Date();
     while ((new Date()) - dt <= milliseconds) { /* Do nothing */ }

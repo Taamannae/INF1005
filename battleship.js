@@ -6,6 +6,7 @@ import { printBoard,
         spotValidator,
         spotParser,
         generateBoard,
+        spotPrettify,
         printStatus,} from './helpers.js';
 import { printPlayerViewBoardsHorizontal,
          printBoardChoiceHorizontal,
@@ -75,7 +76,6 @@ function computerSetup() {
 
 function chooseBoard() {
     let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
-
     printBoardChoiceHorizontal(potentialBoards[0][0], potentialBoards[1][0], potentialBoards[2][0])
 
     var boardNum = prompt(messages.boardNum);
@@ -117,9 +117,9 @@ function findShip(player, spot) {
                     // Check if the hit results in a sink by comparing hit total to shipsize
                     if (boards[player].shipLocation[i].hitTotal >= boards[player].shipLocation[i].shipSize) {
                         boards[player].shipLocation[i].shipSunk = true
-                        return messages.spotHitMessage(player, 'SUNK', boards[player].shipLocation[i].name)
+                        return messages.spotHitMessage(player, 'SUNK', boards[player].shipLocation[i].name, spotPrettify(spot))
                     }
-                    return messages.spotHitMessage(player, 'HIT', boards[player].shipLocation[i].name)
+                    return messages.spotHitMessage(player, 'HIT', boards[player].shipLocation[i].name, spotPrettify(spot))
                 }
                 continue
             } else {
@@ -136,7 +136,7 @@ function checkHit(player, spot) {
         return true
     } else {
         boards[player].viewBoard[spot[0]][spot[1]] = "X"
-        console.log(messages.missedMessage(player))
+        console.log(messages.missedMessage(player, spotPrettify(spot)))
     }
     return false
 }

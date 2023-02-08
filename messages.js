@@ -76,7 +76,7 @@ export const messages = {
    It's the computer's turn                                           
                                                                       
 `,
-    spotHitMessage: function (playerType, hitType, ship) {
+    spotHitMessage: function (playerType, hitType, ship, spot) {
         let message = Chalk.bgGreen.black(`
 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉
 🎉                                             🎉
@@ -87,17 +87,17 @@ export const messages = {
 `)
         if (playerType === 'player') {
             message = Chalk.bgRed.black(`
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
 🚨                                               🚨
-🚨      Oh no! They ${hitType} your ${ship}        🚨
+🚨  Oh no! They hit ${spot} and ${hitType} your ${ship}        🚨
 🚨                                               🚨
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
 `
             )
         }
         return message;
     },
-    missedMessage: function (playerType) {
+    missedMessage: function (playerType, spot) {
         let message = Chalk.bgYellow.black(`
 😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔
 😔                                            😔
@@ -110,7 +110,7 @@ export const messages = {
             message = Chalk.bgGreen.black(`
 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾
 🍾                                           🍾
-🍾            YAY! They missed               🍾
+🍾   YAY! They hit ${spot} and missed        🍾
 🍾                                           🍾
 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾 🍾
 `
