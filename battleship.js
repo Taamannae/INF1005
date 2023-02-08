@@ -7,9 +7,9 @@ import { printBoard,
         spotParser,
         generateBoard,
         printStatus,} from './helpers.js';
+import Chalk from 'chalk';
 
 const prompt = promptSync()
-
 var GAME_STATE = {
     stage: 0,
     gameEnded: false,
@@ -18,49 +18,52 @@ var GAME_STATE = {
 
 const messages = {
     welcome: `
-##########################################################################
-#        ______       _   _   _        _____ _     _
-#        | ___ \\     | | | | | |      /  ___| |   (_)
-#        | |_/ / __ _| |_| |_| | ___  \\ \`--.| | __ _ _ __  
-#        | ___ \\/ _\` | __| __| |/ _ \\  \`--. \ '_ \\| | '_ \\ 
-#        | |_/ / (_| | |_| |_| |  __/ /\__/ / | | | | |_) |
-#        \\____/ \\__,_|\\__|\\__|_|\\___| \\____/|_| |_|_| .__/ 
-#                                                | |    
-#                                                |_|    
-#                                        )___(
-#                                _______/__/_
-#                        ___     /===========|   ___
-#        ____       __   [\\\\\\]___/____________|__[///]   __
-#        \\   \_____[\\]__/___________________________\\__[//]___
-#        \\ INF1005                                            /
-#        \\                                                  /
-#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-#  Game Description:
-#  Battleship is a two-player guessing game where players 
-#  try to sink each other's hidden ships by calling out
-#  coordinates on a grid. The first player to sink all of the
-#  opponent's ships wins the game.
-#
-#  Player vs computer
-#
-#  How to Play:
-#  1. You will be given 3 boards to choose from that will represent your ships.
-#  2. You will call out board coordinates from A1 to J10 to try and hit ships.
-#  3. The computer will also call out coordinates to try and sink your hip.
-#  4. The first player to sink all 5 of their opponent's ships will win the game
-#
-#  Ships in Play and their lengths:
-#  1. Carrier - 5 units
-#  2. Battleship - 4 units
-#  3. Cruiser - 3 units
-#  4. Submarine - 3 units
-#  5. Destroyer - 2 units
-#
-##########################################################################
+######################################################################
+#        ______       _   _   _        _____ _     _                 #
+#        | ___ \\     | | | | | |      /  ___| |   (_)                #
+#        | |_/ / __ _| |_| |_| | ___  \\ \`--.| | __ _ _ __            #
+#        | ___ \\/ _\` | __| __| |/ _ \\  \`--. \\ '_ \\| | '_ \\           #
+#        | |_/ / (_| | |_| |_| |  __/ /\\__/ / | | | | |_) |          #
+#        \\____/ \\__,_|\\__|\\__|_|\\___| \\____/|_| |_|_| .__/           #
+#                                                | |                 #
+#                                                |_|                 #
+#                                       )___(                        #
+#                                _______/__/_                        #
+#                        ___     /===========|   ___                 #
+#        ____       __   [\\\\\\]___/____________|__[///]   __          #
+#        \\   \_____[\\]__/___________________________\\__[//]___        #
+#         \\ INF1005                                            /     #
+#          \\                                                  /      #
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  #
+#                                                                    #
+#  Game Description:                                                 #
+#  Battleship is a two-player guessing game where players            #
+#  try to sink each other's hidden ships by calling out              #
+#  coordinates on a grid. The first player to sink all of the        #
+#  opponent's ships wins the game.                                   #
+#                                                                    #
+#  Player vs computer                                                #
+#                                                                    #
+#  How to Play:                                                      #
+#  1. You will be given 3 boards to choose from that will            #
+#     represent your ships.                                          #
+#  2. You will call out board coordinates from A1 to J10             #
+#     to try and hit ships.                                          #
+#  3. The computer will also call out coordinates to try             #
+#     and sink your hip.                                             #
+#  4. The first player to sink all 5 of their opponent's             #
+#     ships will win the game                                        #
+#                                                                    #
+#  Ships in Play and their lengths:                                  #
+#  1. Carrier - 5 units                                              #
+#  2. Battleship - 4 units                                           #
+#  3. Cruiser - 3 units                                              #
+#  4. Submarine - 3 units                                            #
+#  5. Destroyer - 2 units                                            #
+#                                                                    #
+######################################################################
 
-
-    `,
+`,
     optionText: "First, you must select a game board. Enter '1', '2', or '3'. \nThis will represent the placement of your ships that the computer will try to hit \n",
     optionNumber: function(num) {
         return `
@@ -69,9 +72,10 @@ const messages = {
 #     Option ${num}    #
 #                 #
 ###################
-        `
+`
 
     },
+    boardNum:'Select one of the above boards (1,2,3) to play on:  ',
     badSpot: 'Uh oh'
 }
 
@@ -130,14 +134,14 @@ function computerSetup() {
 function chooseBoard() {
     let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
 
-    print(messages.optionNumber(1))
+    print(Chalk.bgMagenta.black(messages.optionNumber(1)))
     printBoard(potentialBoards[0][0])
-    print(messages.optionNumber(2))
+    print(Chalk.bgMagenta.black(messages.optionNumber(2)))
     printBoard(potentialBoards[1][0])
-    print(messages.optionNumber(3))
+    print(Chalk.bgMagenta.black(messages.optionNumber(3)))
     printBoard(potentialBoards[2][0])
 
-    var boardNum = prompt('Select one of the above boards to play on:  ');
+    var boardNum = prompt(messages.boardNum);
 
     while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
         boardNum = prompt('Sorry, not valid. Try again:  ');
@@ -278,9 +282,8 @@ function play() {
     while (!GAME_STATE.gameEnded) {
         switch (GAME_STATE.stage) {
             case 0: //Welcome State
-                print(messages.welcome)
-                pause(6000)
-                print(messages.optionText)
+                print(Chalk.bgBlack(messages.welcome))
+                print(Chalk.blue(messages.optionText))
                 pause(3000)
                 computerSetup()
                 chooseBoard()
