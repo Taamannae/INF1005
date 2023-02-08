@@ -99,6 +99,8 @@ function playerTurn() {
     }
     spot = spotParser(spot)
     checkHit('computer', spot)
+    pause(2000)
+    console.clear()
 }
 
 function findShip(player, spot) {
@@ -201,6 +203,7 @@ function play() {
                 GAME_STATE.stage += 1;
                 break;
             case 1: // Player Turn
+                console.clear()
                 printTurnStartMessage()
                 printPlayerViewBoardsHorizontal(boards.player.fullBoard, boards.computer.viewBoard)
                 pause(1000)
