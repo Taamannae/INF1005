@@ -16,7 +16,7 @@ var GAME_STATE = {
 }
 
 const messages = {
-    welcome: "Hello, choose a thing",
+    welcome: "Please choose your board to start. Enter '1', '2', or '3'.",
     badSpot: 'Uh oh'
 }
 
@@ -166,7 +166,7 @@ function checkHit(spot, type) {
             return true
         } else {
             boards.player.viewBoard[spot[0]][spot[1]] = "X"
-            console.log("Nice! They missed")
+            console.log("Nice! The computer missed your ships")
             printBoard(boards.player.viewBoard) 
         }
     }
@@ -217,7 +217,7 @@ function computerTurn() {
     }
         successfulSpot = true;
     }
-} // jd - added missing bracket  here but causes problems
+}
 
 function play() {
     while (!GAME_STATE.gameEnded) {
@@ -239,6 +239,17 @@ function play() {
                     GAME_STATE.stage = 3
                     break
                 }
+                var chooseNext = prompt("To view the status of the hits you made on Computer, type 'Status'. If you want to continue, type 'Continue' "); // new prompt to slow the game? 
+                while (chooseNext !== 'null') {
+                    if (chooseNext === "Status") {
+                      printStatus(boards.computer.shipLocation);
+                      break;
+                    } else if (chooseNext === "Continue") {
+                      break;
+                    } else {
+                      chooseNext = prompt('Sorry, not valid. Try again:  ');
+                    }
+                  }
                 GAME_STATE.stage += 1;
                 break;
             case 2: // Computer Turn
