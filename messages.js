@@ -35,7 +35,7 @@ export const messages = {
 #  2. You will call out board coordinates from A1 to J10             #
 #     to try and hit ships.                                          #
 #  3. The computer will also call out coordinates to try             #
-#     and sink your hip.                                             #
+#     and sink your ship.                                             #
 #  4. The first player to sink all 5 of their opponent's             #
 #     ships will win the game                                        #
 #                                                                    #

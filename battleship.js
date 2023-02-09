@@ -94,7 +94,7 @@ function playerTurn() {
     var spot = prompt(messages.playerTurnPrompt);
     let valid = spotValidator(spot, boards.computer.viewBoard)
     while (!valid) {
-        spot = prompt('Sorry, it must be alpha-numeric like "B9". Please try again: ');
+        spot = prompt('Sorry, it must be alpha-numeric like "B9" that has not already been hit. Please try again: ');
         valid = spotValidator(spot, boards.computer.viewBoard)
     }
     spot = spotParser(spot)
