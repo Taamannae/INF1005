@@ -277,7 +277,7 @@ export function generateBoard() {
 
                     }
                 }
-            } else if (direction == 2) { // right
+            } else if (direction == 2) { // down
                 var addedNum = 0;
                 for (let i = UDMin; i <= UDMax + 1; i++) {
                     addedNum = addedNum + board[i][RLMax]
@@ -291,7 +291,7 @@ export function generateBoard() {
 
                     }
                 }
-            } else if (direction == 3) { // right
+            } else if (direction == 3) { // left
                 addedNum = 0;
                 for (let i = RLMin; i <= RLMax + 1; i++) {
                     addedNum = addedNum + board[UDMax][i]
