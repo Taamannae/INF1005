@@ -1,76 +1,12 @@
 import { messages } from "./messages.js";
+import {printPlayerMessage, printBoard} from './printers.js'
+import Chalk from 'chalk';
 
-const commands = ['help', 'rules', 'status']
+import promptSync from 'prompt-sync';
+const prompt = promptSync()
 
-export function printStatus(SHIPS) {
-    console.log("Computer Board Status");
-    let cumulativeHits = 0;
-    for (let i = 0; i < SHIPS.length; i++) {
-      let ship = SHIPS[i];
-      cumulativeHits += ship.hitTotal;
-        console.log(ship.name + " (" + ship.shipSize+ ")" + ": " + (ship.shipSunk ? "Sunk" : "Not Sunk"))
-      ;}
-      console.log("Total Hits: " + cumulativeHits);
-    
-  }
-
-export function print(message) {
-    console.log(message)
-    return ''
-}
-
-export function printBoard(board) {
-    /*
-    Input: An array of arrays
-    This function will take a board (an array of arrays)
-    and print out the stylized, prettified version of that board. The intention is so the player has a cleaner game view
-
-    Example:
-
-    Input: 
-    [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
-
-    Output:    
-           A B C D E F G H I J
-        1  _,_,_,_,_,_,_,_,_,_
-        2  O,O,O,O,O,_,_,_,_,_
-        3  _,_,_,O,_,_,_,_,_,_
-        4  _,_,_,O,_,_,_,_,_,_
-        5  _,_,_,O,_,_,_,_,_,_
-        6  _,_,_,_,_,O,O,O,_,_
-        7  _,_,_,_,_,O,_,_,O,_
-        8  _,_,_,_,_,O,_,_,O,_
-        9  _,_,_,_,_,O,_,_,O,_
-        10 _,_,_,_,_,_,_,_,_,_
-    */
-
-    // Print the column headers
-    console.log('   A B C D E F G H I J')
-
-    //loop through the board
-    for (let i = 0; i < board.length; i++) {
-        //If we're not on row 10, add a space because it's 2 digits 
-        if (i != 9) {
-            //print the row but replace the 0s (empty) with '_' and 1s (boat location) with 'O'
-            console.log(i + 1, '', board[i].join().replaceAll("0", "_").replaceAll("1", "O"))
-        } else {
-            console.log(i + 1, board[i].join().replaceAll("0", "_").replaceAll("1", "O"))
-        }
-    }
-    console.log('\n\n')
-
-    return ''
+export function anyKeyToContinue() {
+    prompt(messages.anyKeyToContinue);
 }
 
 export function getRandomInt(max) {
@@ -81,16 +17,7 @@ export function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-function printHelpMessages(type) {
-    if (type === 'help') {
-        console.log(messages.help)
-    } else if (type === 'rules') {
-        console.log(messages.welcome)
-    } else {
-    }
-}
-
-export function spotValidator(spot, board) {
+export function spotValidator(spot, board, ship) {
     /*
     Input: String
 
@@ -114,11 +41,6 @@ export function spotValidator(spot, board) {
     //Acceptable columns
     const LETTERS = "ABCDEFGHIJ";
 
-    if (commands.includes(spot.toLowerCase())) {
-        printHelpMessages(spot)
-        return false
-    }
-
     //The longest spot will be 3 chars (e.g A10)
     if (spot.length > 3 || spot.length == 0) {
         return false
@@ -130,9 +52,7 @@ export function spotValidator(spot, board) {
     if (!LETTERS.includes(col.toUpperCase()) || isNaN(row) || row > 10) {
         return false
     }
-
     let realSpot = spotParser(spot)
-
     if (board[realSpot[0]][realSpot[1]] === "✓" || board[realSpot[0]][realSpot[1]] === "X") {
         return false
     }
@@ -310,4 +230,143 @@ export function generateBoard() {
         }
     }
     return [board, SHIPS];
+}
+
+
+export function computerTurn(boards) {
+    var successfulSpot = false;
+    while (!successfulSpot) {
+        var wasQueue = false
+        var spot = [getRandomInt(9), getRandomInt(9)];
+        if (boards.computer.computerQueue.length > 0) {
+            spot = boards.computer.computerQueue[0];
+            var previous = boards.computer.computerQueue[1];
+            boards.computer.computerQueue.shift();
+            boards.computer.computerQueue.shift();
+
+            if (boards.player.viewBoard[previous[0]][previous[1]] !== '✓') {
+                continue;
+            }
+            wasQueue = true;
+        }
+        if (boards.player.viewBoard[spot[0]][spot[1]] == '-' || boards.player.viewBoard[spot[0]][spot[1]] == '✓') {
+            continue
+        }
+
+        if (checkHit(boards, 'player', spot) && !wasQueue) {
+            // If we hit a new ship, add the horizontal and vertical squares nearby to try and sink it before trying
+            // any more random guesses.
+            for (let i = 1; i <= 4; ++i) {
+                if (spot[0] - i >= 0) {
+                    boards.computer.computerQueue.push([spot[0] - i, spot[1]]);
+                    boards.computer.computerQueue.push([spot[0] - i + 1, spot[1]]);
+                }
+                if (spot[0] + i < 9) {
+                    boards.computer.computerQueue.push([spot[0] + i, spot[1]]);
+                    boards.computer.computerQueue.push([spot[0] + i - 1, spot[1]]);
+                }
+                if (spot[1] - i >= 0) {
+                    boards.computer.computerQueue.push([spot[0], spot[1] - i]);
+                    boards.computer.computerQueue.push([spot[0], spot[1] - i + 1]);
+                }
+                if (spot[1] + i < 9) {
+                    boards.computer.computerQueue.push([spot[0], spot[1] + i]);
+                    boards.computer.computerQueue.push([spot[0], spot[1] + i - 1]);
+                }
+            }
+        }
+        successfulSpot = true;
+    }
+} 
+
+
+export function checkHit(boards, player, spot) {
+    if (boards[player].fullBoard[spot[0]][spot[1]] == 1) {
+        boards[player].viewBoard[spot[0]][spot[1]] = "✓"
+        let hitShip = findShip(boards, player, spot)
+        console.log(hitShip)
+        return true
+    } else {
+        boards[player].viewBoard[spot[0]][spot[1]] = "X"
+        boards[player].lastMove = `They hit ${spotPrettify(spot)} and missed`;
+        console.log(messages.missedMessage(player, spotPrettify(spot)))
+    }
+    return false
+}
+
+function findShip(boards, player, spot) {
+    //loop through the ships
+    for (let i = 0; i < boards[player].shipLocation.length; i++) {
+        //loop through the coords
+        for (let j = 0; j < boards[player].shipLocation[i].coords.length; j++) {
+            //Check if coord X matches the hit spot
+            if (boards[player].shipLocation[i].coords[j][0] === spot[0]) {
+                //Check if coord Y matches the hit spot
+                if (boards[player].shipLocation[i].coords[j][1] === spot[1]) {
+
+                    // Increase hit total of the ship
+                    boards[player].shipLocation[i].hitTotal += 1;
+
+                    // Check if the hit results in a sink by comparing hit total to shipsize
+                    if (boards[player].shipLocation[i].hitTotal >= boards[player].shipLocation[i].shipSize) {
+                        boards[player].shipLocation[i].shipSunk = true
+
+                        boards[player].lastMove = `They hit ${spotPrettify(spot)} and SUNK your ${boards[player].shipLocation[i].name}`;
+                        return messages.spotHitMessage(player, 'SUNK', boards[player].shipLocation[i].name, spotPrettify(spot))
+                    }
+                    boards[player].lastMove = `They hit ${spotPrettify(spot)} and HIT your ${boards[player].shipLocation[i].name}`;
+
+                    return messages.spotHitMessage(player, 'HIT', boards[player].shipLocation[i].name, spotPrettify(spot))
+                }
+                continue
+            } else {
+                continue
+            }
+        }
+    }
+}
+
+export function chooseBoard(boards) {
+    let potentialBoards = [generateBoard(), generateBoard(), generateBoard()]
+    printPlayerMessage(messages.chooseBoard())
+    printBoard([potentialBoards[0][0], potentialBoards[1][0], potentialBoards[2][0]])
+
+    var boardNum = prompt(messages.boardNum);
+
+    while (boardNum.length == 0 || isNaN(boardNum) || boardNum < 0 || boardNum > 3) {
+        boardNum = prompt('Sorry, not valid. Try again:  ');
+        boardNum = parseInt(boardNum)
+    }
+
+    boards.player.fullBoard = potentialBoards[parseInt(boardNum) - 1][0]
+    boards.player.viewBoard = potentialBoards[parseInt(boardNum) - 1][0]
+    boards.player.shipLocation = potentialBoards[parseInt(boardNum) - 1][1]
+}
+
+export function playerTurn(boards) {
+    var spot = prompt(messages.playerTurnPrompt);
+    let valid = spotValidator(spot, boards.computer.viewBoard, boards.computer.shipLocation)
+    while (!valid) {
+        spot = prompt('Sorry, it must be alpha-numeric like "B9" that has not already been hit. Please try again: ');
+        valid = spotValidator(spot, boards.computer.viewBoard)
+    }
+    spot = spotParser(spot)
+    checkHit(boards, 'computer', spot)
+}
+
+export function winCondition(boards, player) {
+    for (let i = 0; i < boards[player].shipLocation.length; i++) {
+        if (boards[player].shipLocation[i].shipSunk) {
+            continue
+        }
+        return false
+    }
+    return true
+}
+
+export function computerSetup(boards) {
+    let computerBoard = generateBoard()
+    boards.computer.fullBoard = computerBoard[0];
+    boards.computer.shipLocation = computerBoard[1];
+    return ''
 }

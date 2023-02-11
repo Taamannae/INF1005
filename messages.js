@@ -35,7 +35,7 @@ export const messages = {
 #  2. You will call out board coordinates from A1 to J10             #
 #     to try and hit ships.                                          #
 #  3. The computer will also call out coordinates to try             #
-#     and sink your ship.                                             #
+#     and sink your ship.                                            #
 #  4. The first player to sink all 5 of their opponent's             #
 #     ships will win the game                                        #
 #                                                                    #
@@ -57,7 +57,11 @@ export const messages = {
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~                                                                        ~
-~                        Let's Start the Game                            ~
+~               _        _   _      ___ _            _                   ~
+~              | |   ___| |_( )___ / __| |_ __ _ _ _| |_                 ~
+~              | |__/ -_)  _|/(_-< \\__ \\  _/ _\` | '_|  _|                ~
+~              |____\\___|\\__| /__/ |___/\\__\\__,_|_|  \\__|                ~
+~                                                                        ~
 ~                                  __/___                                ~
 ~                            _____/______|                               ~
 ~                    _______/_____\\_______\\_____                         ~
@@ -66,7 +70,7 @@ export const messages = {
 ~                                                                        ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`,
+`, anyKeyToContinue:'Press any key to continue: ',
     help: `
     While playing you can use the following commands:
     1. help - The message you're seeing now. It'll show you a list of possible commands,
@@ -82,6 +86,21 @@ export const messages = {
    It's the computer's turn                                           
                                                                       
 `,
+chooseBoard: function() {
+    return Chalk.bgMagenta.black.bold(
+        `                                                                         
+   Choose a board                                                        `)+ Chalk.bgMagenta.black(`
+   First, you must select a game board. Enter '1', '2', or '3'.          
+   This will represent the placement of your ships that the computer     
+   will try to hit                                                       
+                                                                         `) +
+    Chalk.dim(`\n
+   ###################      ###################      ###################   
+   #     Option 1    #      #     Option 2    #      #     Option 3    #   
+   ###################      ###################      ###################   
+`)
+
+},
     spotHitMessage: function (playerType, hitType, ship, spot) {
         let spacerNum = Math.floor((54 - 22 - hitType.length - ship.length) / 2)
         let message = Chalk.bgGreen.black(`
