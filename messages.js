@@ -1,5 +1,28 @@
 import Chalk from 'chalk';
+const LABEL_SIZE = 50;
+const EMOJI_LENGTH = 2;
+const LABEL_INNER = LABEL_SIZE - (EMOJI_LENGTH * 2);
 
+const PLAYER_INFO = {
+    player: {
+        HIT: {bg: 'bgRed',emoji: '🚨',},
+        MISS: {bg: 'bgGreen',emoji: '😃'},
+        SUNK: {bg: 'bgRed',emoji: '🚨',}
+    },
+    computer: {
+        HIT: {bg: 'bgGreen',emoji: '🎉'},
+        MISS: {bg: 'bgYellow',emoji: '😔'},
+        SUNK: {bg: 'bgGreen',emoji: '🎉'},
+    }
+}
+
+function sp(num) {
+    /*
+    Returns a string with only spaces equal to the num.
+    NOTE: This was added for code clarity
+    */
+    return ' '.repeat(num)
+}
 
 export const messages = {
     welcome: `
@@ -70,81 +93,137 @@ export const messages = {
 ~                                                                        ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`, anyKeyToContinue:'Press any key to continue: ',
-    help: `
-    While playing you can use the following commands:
-    1. help - The message you're seeing now. It'll show you a list of possible commands,
-    2. status - Displays the current ship states of the opponent
-    3. rules - Displays the rules shown at the beginning
-    `,
-    yourBoard: `Your Board`,
-    compBoard: `Computer Board`,
+`,  anyKeyToContinue:'Press any key to continue: ',
     boardNum: 'Select one of the above boards (1,2,3) to play on:  ',
     playerTurnPrompt: 'Where do you want to place a hit (A1 - J10)? ',
-    computerTurnMessage:
-        `                                                                      
-   It's the computer's turn                                           
-                                                                      
-`,
-chooseBoard: function() {
-    return Chalk.bgMagenta.black.bold(
-        `                                                                         
-   Choose a board                                                        `)+ Chalk.bgMagenta.black(`
-   First, you must select a game board. Enter '1', '2', or '3'.          
-   This will represent the placement of your ships that the computer     
-   will try to hit                                                       
-                                                                         `) +
-    Chalk.dim(`\n
-   ###################      ###################      ###################   
-   #     Option 1    #      #     Option 2    #      #     Option 3    #   
-   ###################      ###################      ###################   
-`)
+    computerTurnMessage:(sp(50) + "\n" +
+    "   It's the computer's turn" + sp(23) + '\n' + sp(50) + "\n"
+    ),
+    boardTitles: function() {
+        /**
+         Returns the board titles so the player can see which board is their. Output is the following string:
+
+         ######################     ######################
+         #     Your Board     #     #  Computer's Board  #
+         ######################     ######################
+
+         */
+        let size = 22
+        let yourBoard = "Your Board";
+        let compBoard = "Computer's Board"
+        let yourSpace = (size - yourBoard.length - 2) / 2
+        let compSpace = (size - compBoard.length - 2) / 2
+
+        let message = (
+            Chalk.dim('#'.repeat(size)) + sp(5) + Chalk.dim('#'.repeat(size)) + "\n" +
+            Chalk.dim("#") +
+            Chalk.dim(
+                sp(yourSpace) + yourBoard + sp(yourSpace)) + Chalk.dim("#") +
+            sp(5) +
+            Chalk.dim("#") +
+            Chalk.yellow(
+                sp(compSpace) + compBoard + sp(compSpace)) + Chalk.dim("#\n") +
+            Chalk.dim('#'.repeat(size)) + sp(5) + Chalk.dim('#'.repeat(size))
+        )
+
+        return message
+
+    },
+    chooseBoard: function() {
+        let size = 22
+        let one = "Option 1";
+        let two = "Option 2";
+        let three = "Option 3";
+        let oneLen = (size - one.length - 2) / 2
+        let twoLen = (size - two.length - 2) / 2
+        let threeLen = (size - three.length - 2) / 2
+
+        /*
+        Returns a message urging the player to pick one of the boards and the titles of the options.
+        */
+        return (Chalk.bgMagenta.black(Chalk.bold(
+        sp(70) + '\n' +
+        `   Choose a board${sp(53) }\n`) +
+        `   First, you must select a game board. Enter '1', '2', or '3'.${sp(7)}\n` +
+        `   This will represent the placement of your ships that the computer${sp(2)}\n` +
+        `   will try to hit${sp(52)}\n` +
+        sp(70) + '\n'
+        ) +
+        Chalk.dim(
+            '#'.repeat(size) + sp(3) + ('#'.repeat(size)) + sp(3) + ('#'.repeat(size)) + "\n" +
+            
+            "#" + sp(oneLen) + one + sp(oneLen) + "#" +
+            sp(3) + "#" + sp(twoLen) + two + sp(twoLen) + "#" + sp(3) + "#" + sp(threeLen) + three + sp(threeLen) + "#\n" +
+
+                '#'.repeat(size) + sp(3) + ('#'.repeat(size)) + sp(3) + ('#'.repeat(size)) + "\n"
+        )
+    )
 
 },
-    spotHitMessage: function (playerType, hitType, ship, spot) {
-        let spacerNum = Math.floor((54 - 22 - hitType.length - ship.length) / 2)
-        let message = Chalk.bgGreen.black(`
-🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉
-🎉                                                      🎉
-🎉${' '.repeat(spacerNum)}Congrats! You ${hitType} their ${ship}.${' '.repeat(spacerNum)}🎉
-🎉                                                      🎉
-🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉
+    spotHitMessage: function (playerType, hitType, ship, spot ) {
+        /*
+        Returns the appropriate message for hit/sink moves for both
+        the computer and the player. 
 
-`)
-        if (playerType === 'player') {
-            let spacerNum = Math.floor((54 - 28 - spot.length - hitType.length - ship.length) / 2)
-            message = Chalk.bgRed.black(`
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-🚨                                                      🚨
-🚨${' '.repeat(spacerNum)}Oh no! They hit ${spot} and ${hitType} your ${ship}.${' '.repeat(spacerNum)}🚨
-🚨                                                      🚨
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-`
-            )
+        For example:
+        😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔
+        😔                                       😔
+        😔           Awwww! You missed.          😔
+        😔                                       😔
+        😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔
+        
+        */
+        let label = playerType === 'player' ? `YAY! They hit ${ spot } & missed.` : `Awwww! You missed.`;
+
+        if (hitType === "HIT" || hitType === "SUNK") {
+            label = playerType === 'player' ? `Oh no! They hit ${spot} & ${hitType} your ${ship}.` : `Congrats! You ${hitType} their ${ship}.`;
         }
+
+        // To center the text, the variability of the message needs to be taken into account. We need to mod it so we can still balance even and odd sized messages
+
+        let fullSpace = (LABEL_INNER - label.length)
+        let spacerNum = Math.floor(fullSpace / 2 )
+        let leftOvers = fullSpace % 2
+        let emoji = PLAYER_INFO[playerType][hitType].emoji
+        let message = Chalk[PLAYER_INFO[playerType][hitType].bg].black(
+            "\n" +
+            emoji.repeat(LABEL_SIZE / 2) + "\n" +
+            `${emoji + sp(LABEL_INNER) + emoji}\n` +
+            `${emoji + sp(spacerNum) + label + sp(spacerNum + leftOvers) + emoji}\n` +
+            `${emoji + sp(LABEL_INNER) + emoji}\n` +
+            emoji.repeat(LABEL_SIZE / 2) + "\n"
+        )
         return message;
     },
-    missedMessage: function (playerType, spot) {
-        let message = Chalk.bgYellow.black(`
-😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔
-😔                                            😔
-😔            Awwww! You missed.              😔
-😔                                            😔
-😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔😔
+    playerStartTurnMessage: function(player) {
+        /*
+        Returns the message to show the start of the player's turn
+        this includes displaying the computer's last move
+        */
+        let lastMoveMessage = '';
+        let spacerNum = 0
 
-`)
-        if (playerType === 'player') {
-            let spacerNum = Math.floor((44 - 26 - spot.length)/2)
-            message = Chalk.bgGreen.black(`
-😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃
-😃                                            😃
-😃${' '.repeat(spacerNum)}YAY! They hit ${spot} and missed.${' '.repeat(spacerNum) }😃
-😃                                            😃
-😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃😃
-`
+        //if the last move exists
+        if (player.lastMove) {
+            spacerNum = LABEL_SIZE - player.lastMove.length - 3
+            lastMoveMessage = Chalk.bold(
+                `   Computer's Last Move:${sp(26)}\n` +
+                `   ${player.lastMove + " ".repeat(spacerNum)}\n`+
+                sp(50)
             )
         }
-        return message;
+
+        let message = Chalk.bgMagenta.black(
+            sp(LABEL_SIZE) + "\n" +
+            Chalk.bgMagenta.black.bold(`   It's your turn${sp(33)}\n`) +
+            `   Here is the current state of the game.${sp(9)}\n` +
+            `   You can hit anywhere from A1 to J10${sp(12)}\n` +
+            `   as long as it's not hit before.${sp(16)}\n` +
+            sp(LABEL_SIZE) + '\n' +
+            lastMoveMessage
+        )
+        return message
+
     },
     youWon: `
                                                                      

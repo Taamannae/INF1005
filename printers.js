@@ -1,58 +1,50 @@
 import Chalk from 'chalk';
 import { messages } from './messages.js';
 
-export function printBoardTitle() {
-    let size = 22
-    let yourMessageSpacer = (size - messages.yourBoard.length - 2)/2
-    let compMessageSpacer = (size - messages.compBoard.length - 2)/2
-    console.log(
-        Chalk.dim('#'.repeat(size)) + 
-        ' '.repeat(5) + 
-        Chalk.dim('#'.repeat(size))
-    )
-    
-    console.log(
-        Chalk.dim("#") +
-        Chalk.dim(
-            ' '.repeat(yourMessageSpacer) + messages.yourBoard + ' '.repeat(yourMessageSpacer)) + Chalk.dim("#") +
-            ' '.repeat(5) + 
-        Chalk.dim("#") +
-        Chalk.yellow(
-            ' '.repeat(compMessageSpacer) + messages.compBoard + ' '.repeat(compMessageSpacer)) + Chalk.dim("#")
-    )
+export function printStatus(yourShips, computerShips, player) {
+    /*
+    Input: player's and computer's ships and the current turn
+    Output: none
+    ------------------------------
+    Horizontally prints the status of all the ships, their hits, size sunk status for the computer and the player
 
-    console.log(
-        Chalk.dim('#'.repeat(size)) +
-        ' '.repeat(5) +
-        Chalk.dim('#'.repeat(size))
-    )
-}
+     */
 
-export function printStatus(yourShips, computerShips) {
+    // Print the turn message and board titles
+    printPlayerMessage(messages.playerStartTurnMessage(player))
+    printPlayerMessage(messages.boardTitles())
 
-    console.log(' '.repeat(10) + 'Size |' + ' Hits' + ' '.repeat(16) + 'Size |' + ' Hits' )
+    // Print the table headers
+    console.log(' '.repeat(11) + 'Size |' + ' Hits' + ' '.repeat(16) + 'Size |' + ' Hits' )
 
+    // Returns the stylized numbers and statuses of a given ship
     function status(name, size, spacer, hits, sunk) {
         if (!sunk) {
-            return Chalk.red(name) + " ".repeat(spacer) + " ".repeat(1) + size + "  |  " + hits
+            return Chalk.red(name) + " ".repeat(spacer) + " ".repeat(2) + size + "  |  " + hits
         }
-        return Chalk.green(name) + " ".repeat(spacer) + "Sunk"
+        return Chalk.green(name) + " ".repeat(spacer) + "Sunk    "
     };
 
+    // Loops through all the ships and prints the pretty status
     for (let i = 0; i < yourShips.length; i++) {
         let ship = yourShips[i];
         let ship2 = computerShips[i];
         let spacer = 11 - ship.name.length
 
-        console.log(status(ship.name, ship.shipSize, spacer, ship.hitTotal, ship.shipSunk) + ' '.repeat(8) + status(ship2.name, ship2.shipSize, spacer, ship2.hitTotal, ship2.shipSunk))
+        console.log(status(ship.name, ship.shipSize, spacer, ship.hitTotal, ship.shipSunk) + ' '.repeat(7) + status(ship2.name, ship2.shipSize, spacer, ship2.hitTotal, ship2.shipSunk))
 
     }
     console.log("\n")
 }
 
 export function printPlayerMessage(message) {
+    /*
+      Input: String
+      Output: none
+      -----------------------
+      Simple print statement for readability
+    */
     console.log(message)
-    return ''
 }
 
 
@@ -60,7 +52,10 @@ export function printBoard(boards) {
     /*
     Input: An array of arrays
     This function will take a board (an array of arrays)
-    and print out the stylized, prettified version of that board. The intention is so the player has a cleaner game view
+    and print out the horizontal stylized, prettified version of that board. The intention is so the player has a cleaner game view.
+
+    NOTE: This function can take up to 3 boards and print them beside each
+    other
 
     Example:
 
@@ -93,6 +88,12 @@ export function printBoard(boards) {
     */
 
     function boardLineReplacer(line) {
+        /*
+         Input: Array 
+         Output: String
+         ----------
+         Returns a cleaned up board line for printing
+        */
         let liner = line.join().replaceAll("0", "_").replaceAll("1", "O").replaceAll("X", Chalk.red("X")).replaceAll("✓", Chalk.bgGreen.black("✓"))
         return (liner)
     }
@@ -134,38 +135,6 @@ export function printBoard(boards) {
         }
     }
     console.log('\n\n')
-
-}
-
-
-export function printTurnStartMessage(boards) {
-    let lastMoveMessage = '';
-    let spacerNum = 0
-    if(boards.computer.lastMove) {
-        spacerNum = 71 - boards.player.lastMove.length
-        lastMoveMessage = Chalk.bold(`
-                                                                          
-   Computer's Last Move:                                                  
-   ${boards.player.lastMove + " ".repeat(spacerNum) }`)
-    }
-    console.log(Chalk.bgMagenta.black.bold(
-        `                                                                          
-   It's your turn                                                         `),Chalk.bgMagenta.black(`
-   Here is the current state of the game. You can hit anywhere from       
-   A1 to J10 as long as it's not hit before.                              ${lastMoveMessage}
-                                                                          
-`))
-
-}
-
-export function computerTurnMessage() {
-    console.log(Chalk.bgMagenta.black.bold(
-        `                                                                          
-   It's the computer's turn                                                         `), Chalk.bgMagenta.black(`
-   Here is the current state of the game. You can hit anywhere from       
-   A1 to J10 as long as it's not hit before.                              
-                                                                          
-`))
 
 }
 
