@@ -22,7 +22,7 @@ export function printStatus(yourShips, computerShips, player) {
         if (!sunk) {
             return Chalk.red(name) + " ".repeat(spacer) + " ".repeat(2) + size + "  |  " + hits
         }
-        return Chalk.green(name) + " ".repeat(spacer) + "Sunk    "
+        return Chalk.green(name) + " ".repeat(spacer) + "Sunk     "
     };
 
     // Loops through all the ships and prints the pretty status

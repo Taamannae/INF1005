@@ -175,7 +175,7 @@ export function generateBoard() {
 
         while (!shipComplete) {
             // Coordinate for the start of the ship 
-            const start = [getRandomInt(9), getRandomInt(9)];
+            const start = [getRandomInt(10), getRandomInt(10)];
 
             // Which way to face
             // UP=0, RIGHT=1, DOWN=2, LEFT=3
@@ -202,12 +202,16 @@ export function generateBoard() {
             const UDMax = Math.max(start[0], end[0]);
             const RLMin = Math.min(start[1], end[1]);
             const RLMax = Math.max(start[1], end[1]);
+
             // Check collision and add to board
             if (direction == 0) { // up
                 var addedNum = 0;
                 // Checking if there are any ships in the way
-                for (let i = UDMin; i <= UDMax + 1; i++) {
+                for (let i = UDMin; i <= UDMax; i++) {
+                    // console.log(board[i])
+                    // console.log(RLMax)
                     addedNum = addedNum + board[i][RLMax]
+
                 }
                 if (addedNum > 0) {
                     continue
@@ -220,7 +224,7 @@ export function generateBoard() {
                 }
             } else if (direction == 1) { // right
                 var addedNum = 0;
-                for (let i = RLMin; i <= RLMax + 1; i++) {
+                for (let i = RLMin; i <= RLMax; i++) {
                     addedNum = addedNum + board[UDMax][i]
                 }
                 if (addedNum > 0) {
@@ -234,7 +238,7 @@ export function generateBoard() {
                 }
             } else if (direction == 2) { // down
                 var addedNum = 0;
-                for (let i = UDMin; i <= UDMax + 1; i++) {
+                for (let i = UDMin; i <= UDMax; i++) {
                     addedNum = addedNum + board[i][RLMax]
                 }
                 if (addedNum > 0) {
@@ -248,7 +252,7 @@ export function generateBoard() {
                 }
             } else if (direction == 3) { // left
                 addedNum = 0;
-                for (let i = RLMin; i <= RLMax + 1; i++) {
+                for (let i = RLMin; i <= RLMax; i++) {
                     addedNum = addedNum + board[UDMax][i]
                 }
                 if (addedNum > 0) {
@@ -284,7 +288,7 @@ export function computerTurn(boards) {
     while (!successfulSpot) {
         var wasQueue = false
         // Starting Random
-        var spot = [getRandomInt(9), getRandomInt(9)];
+        var spot = [getRandomInt(10), getRandomInt(10)];
 
         // Keeping track of other potential spots to check if a previous spot was a hit
         if (boards.computer.computerQueue.length > 0) {
@@ -312,7 +316,7 @@ export function computerTurn(boards) {
                     boards.computer.computerQueue.push([spot[0] - i, spot[1]]);
                     boards.computer.computerQueue.push([spot[0] - i + 1, spot[1]]);
                 }
-                if (spot[0] + i < 9) {
+                if (spot[0] + i <= 9) {
                     boards.computer.computerQueue.push([spot[0] + i, spot[1]]);
                     boards.computer.computerQueue.push([spot[0] + i - 1, spot[1]]);
                 }
@@ -320,7 +324,7 @@ export function computerTurn(boards) {
                     boards.computer.computerQueue.push([spot[0], spot[1] - i]);
                     boards.computer.computerQueue.push([spot[0], spot[1] - i + 1]);
                 }
-                if (spot[1] + i < 9) {
+                if (spot[1] + i <= 9) {
                     boards.computer.computerQueue.push([spot[0], spot[1] + i]);
                     boards.computer.computerQueue.push([spot[0], spot[1] + i - 1]);
                 }

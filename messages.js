@@ -93,7 +93,7 @@ export const messages = {
 ~                                                                        ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`,  anyKeyToContinue:'Press any key to continue: ',
+`,  anyKeyToContinue:"Press enter/return to continue: ",
     boardNum: 'Select one of the above boards (1,2,3) to play on:  ',
     playerTurnPrompt: 'Where do you want to place a hit (A1 - J10)? ',
     computerTurnMessage:(sp(50) + "\n" +
