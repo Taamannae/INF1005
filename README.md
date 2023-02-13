@@ -16,6 +16,9 @@
          \ INF1005                                            /     
           \                                                  /      
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+**By: Coded by Taamannae Taabassum & Jennifer Deng**
+
 This is a Node RELP battleship game. You will play against the computer in a battle to sink the other's ships. You will be given 3 randomly generated boards preloaded with ships. From there, you and the computer will take turns picking spots on the board to hit. The first to sink all 5 ships will win the game.
 ## How to start
 Step 1
@@ -29,8 +32,6 @@ Step 2
 node battleship.js
 ```
 
-## Authors
-Taamannae Taabassum & Jennifer Deng
 
 ## General Notes
 ### Computer Moves
